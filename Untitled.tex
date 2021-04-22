@@ -1,0 +1,205 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Do companies Headquartered in privacy-friendly jurisdictions have better privacy policies?},
+  pdfauthor={Pseudo McNamesely},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Do companies Headquartered in privacy-friendly jurisdictions have
+better privacy policies?}
+\author{Pseudo McNamesely}
+\date{09/04/2021}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+The past five years have marked a significant shift in the work of
+privacy policy researchers. Enabled by the Usable Privacy Project,
+myriad datasets in the form of annotated privacy policy corpora have
+been developed and further research is only accellerating. This project
+briefly tracks the efforts made by The Usable Privacy Project before
+turning to an experiment of it's own, which aims to measure whether
+emerging privacy legislation such as the General Data Protection
+Regulation (GDPR) and the California Consumer Privacy Act (CCPA) have an
+impact on the quality of privacy policies. Using a multiple linear
+regression, this project aims to speak on potential causality between
+the legal jurisdiction where a company is headquartered and the quality
+of their privacy polict. At this time, you are reading a sentence that
+holds the place of where I will briefly talk about the result. Feel free
+to read this sentence in the voice of Morgan Freeman, let his warm
+baritone wash over you and make you remember a time when you didnt have
+so much work to do.
+\end{abstract}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Over the past five years, research in the communities of digital privacy
+and data protection have taken unprecedented strides. While this is
+strongly reflected in recent actions taken by governments to revamp
+their digital privacy legislation, the vastness of platforms with their
+own privacy policies provides a wellspring of data for researchers to
+dive into. The most significant research program in this field is
+undoubtedly the Universal Privacy Policy Project {[}sadeh{]}, which
+marks an international and multidisciplinary effort to collect the data
+found within privacy policies as corpora, and then provide these corpora
+to researchers for further data analysis. Work on this project began in
+2013, and to date seven data sets and 62 publications have been produced
+that cover relevant areas such as scaling the collection of privacy
+policy corpora {[}MAPS{]}, the reliability of machine learning models in
+classifying specific ``data actions'' within corpora {[}kumar{]}, and
+empirically measuring the privacy risks of a representative sample of
+privacy policies {[}Bhatia{]}.
+
+The following project and experimental design draws heavily on the
+methods and techniques developed by the Usable Privacy Project in
+addition to utilizing the Usable Privacy datasets for further
+statistical analysis. Namely, the data used in this experiment is the
+OPP-115 corpus, which is collection of 115 annotated privacy policies
+that were pre-selected through sector-based sub-sampling by the
+principal researchers of this project {[}Wilson{]}. Given the relative
+complexity of this dataset from gathering through to analysis and
+modeling, this project also provides a brief survey of literature
+relevant to the Usable Privacy Project as to better acquaint the reader
+with methods considered s tate-of-the-art in digital privacy research.
+
+While our internet, and the platforms that collect data from it, operate
+on a global scale, the means by which the internet is regulated still
+mostly falls into the hands of national actors working within specified
+jurisdictions. While researchers in the field of political science and
+international relations have an extremely firm understanding of how this
+can lead to policy inconsistency in other spaces that require collective
+action, relatively little is written on this relationship as it speaks
+to privacy and data protection. Although this project is not necessarily
+concerned with addressing issues of collective action, it is certainly
+concerned with investigating the relationship between regulators who
+have taken action and regulators who have not. More specifically, this
+project is guided by the following research question:
+
+\textbf{Does the legal jurisdiction of an organization's headquarters
+impact the quality of their privacy policies?}
+
+This research question uses somewhat indirect variables to accomplish
+it's objective, but can be generally thought of as a way to measure how
+effective digital privacy legislation is at creating high quality
+privacy policies, which are considered the \emph{de jure} standard for
+notifying Internet users of applicable privacy practices" {[}MAPS{]}.
+Although there are some limitations to this approach, the experiment
+will be conducted utilizing metrics from {[}Wilson{]} et al., that gauge
+the frequency at which particular data actions appear in a privacy
+policy. Using these frequency percentages, an aggregated continuous
+variable \texttt{privacy\_score} will serve as the device to measure
+privacy policies. Collecting the legal jurisdictions where each company
+was done through basic research of each company and represents our
+independent variable \texttt{hq\_jurisdiction}, which is added to the
+dataset alongside \texttt{privacy\_score}. For basic non-parametric
+estimation, t-tests were employed as the the dependent variable in
+question is continuous while the independent variable is categorical.
+
+\[
+t = \frac{m-\mu }{s\sqrt{n}} 
+\]
+
+To investigate causality, the method used will be a multiple linear
+regression, which allows us to better observe a continuous variable
+against a categorical variable and provides more metrics for us to base
+our inferences off of. A statistical expression of this model can be
+understood as follows:
+
+\[
+y = \alpha + \beta_{jurisdiction1}x_{jurisdiction1} + \beta_{jurisdiction2}x_{jurisdiction2}+... \beta_{jurisdictionx}x_{jurisdictionx} 
+\] It is important to keep this variable \texttt{jurisdiction} rather
+than `country' as legal jurisdictions responsible for regulating digital
+privacy vary by country. This is highly visible in the European Union's
+supranational General Data Protection Regulation (GDPR) and California's
+sub-national California Consumer Protection Act (CCPA), both of which
+now act as significant components to digital privacy online but neither
+operate at a national level. The ambiguity of jurisdiction is another
+limitation of this experiment. This limitation, along with others and a
+more detailed breakdown of modeling are included in the following
+sections {[}@citeR{]}.
+
+\hypertarget{primer-on-the-usable-privacy-project}{%
+\section{Primer on The Usable Privacy
+Project}\label{primer-on-the-usable-privacy-project}}
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+\hypertarget{exploratory-analysis}{%
+\section{Exploratory analysis}\label{exploratory-analysis}}
+
+\hypertarget{modeling}{%
+\section{Modeling}\label{modeling}}
+
+\hypertarget{results-and-discussion}{%
+\section{Results and Discussion}\label{results-and-discussion}}
+
+\hypertarget{closing-remarks}{%
+\section{Closing Remarks}\label{closing-remarks}}
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\hypertarget{appendices}{%
+\section{Appendices}\label{appendices}}
+
+\end{document}

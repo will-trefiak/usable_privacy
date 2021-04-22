@@ -1,0 +1,121 @@
+---
+title: "Placeholder Title"
+author: "William J. Trefiak"
+date: "09/04/2021"
+output: pdf_document
+abstract: "The past five years have marked a significant shift in the work of privacy policy researchers. Enabled by the Usable Privacy Project, myriad datasets in the form of annotated privacy policy corpora have been developed and further research is only accellerating. This project briefly tracks the efforts made by The Usable Privacy Project before turning to an experiment of it's own, which aims to measure whether emerging privacy legislation such as the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA) have an impact on the quality of privacy policies. Using a multiple linear regression, this project aims to speak on potential causality between the legal jurisdiction where a company is headquartered and the quality of their privacy polict. At this time, you are reading a sentence that holds the place of where I will briefly talk about the result. Feel free to read this sentence in the voice of Morgan Freeman, let his warm baritone wash over you and make you remember a time when you didnt have so much work to do."
+---
+```{r, Setup, include=FALSE}
+library(tidyverse)
+library(janitor)
+library(stargazer)
+library(readr)
+library(here)
+
+here()
+```
+
+# Introduction
+
+Over the past several years, research in the communities of digital privacy and data protection have taken unprecedented strides. While this is strongly reflected in recent actions taken by governments to revamp their digital privacy legislation, the vastness of platforms with their own privacy policies provides a wellspring of data for researchers to dive into. The most significant research program in this field is undoubtedly the Usable Privacy Policy Project [@sadeh], which marks an international and multidisciplinary effort to collect the data found within privacy policies as corpora, and then provide these corpora to researchers for further data analysis. Work on this project began in 2013, and to date seven data sets and 62 publications have been produced that cover relevant areas such as scaling the collection of privacy policy corpora [@MAPS], the reliability of machine learning models in classifying specific "data actions" within corpora [@kumar], and empirically measuring the privacy risks of a representative sample of privacy policies [@Bhatia]. 
+
+The following project and experimental design draws heavily on the methods and techniques developed by the Usable Privacy Project in addition to utilizing the Usable Privacy datasets for further statistical analysis. Namely, the data used in this experiment is the OPP-115 corpus, which is collection of 115 annotated privacy policies that were pre-selected through sector-based sub-sampling by the principal researchers of this project [@Wilson]. Given the relative complexity of this dataset from gathering through to analysis and modeling, this project also provides a brief survey of literature relevant to the Usable Privacy Project as to better acquaint the reader with methods considered state-of-the-art in digital privacy research. 
+
+While our internet, and the platforms that collect data from it, operate on a global scale, the means by which the internet is regulated still mostly falls into the hands of national actors working within specified jurisdictions. While researchers in the field of political science and international relations have an extremely firm understanding of how this can lead to policy inconsistency in other spaces that require collective action, relatively little is written on this relationship as it speaks to privacy and data protection. Although this project is not necessarily concerned with addressing issues of collective action, it is certainly concerned with investigating the relationship between regulators who have taken action and regulators who have not. More specifically, this project is guided by the following research question:
+
+*Do privacy policies with a higher number of clauses written for international/specific audiences have more consumer-friendly data practices?*
+
+This research question uses somewhat indirect variables to accomplish it's objective, but can be generally thought of as a way to measure how effective digital privacy legislation is at creating higher quality privacy policies, which are considered the *de jure* standard for notifying Internet users of applicable privacy practices" [@MAPS]. Although there are some limitations to this approach, the experiment will be conducted utilizing metrics from [@Wilson] et al., that provide a count of particular "data actions" [@Wilson] that appear in a typical privacy policy. While some of these data actions can most certainly be considered consumer adverse (collection actions), there are an equal number of data actions that can be considered consumer friendly (access, edit and deletion) or relatively benign (policy changes). In addition, a final data action identified by the principal researchers captures language addressed to a particular audience covered by regulations - most often for audiences in California or the EU. Overall, this experiment investigates whether a high number of instances where an international (read: regulated) audience is mentioned is related to an increased amount of data practices that are consumer friendly in a given privacy policy. Before explaining this modeling in detail, however, it is first important to provide some context on the Usable Privacy Project as well as the data used in this experiment.
+
+# Data
+
+## The Usable Privacy Policy Project
+
+In many respects, this particular experiment expands upon and draws from the body of research associated with The Usable Privacy project initially launched in 2013. While the OPP-115 corpus [@Wilson] is the original dataset to come out of this project, six further datasets have been developed that both have enriched the original annotation scheme as well as scaled the capabilities of the OPP-115 corpus into the hundreds of thousands of privacy policies. The most recent significant contribution to the Usable Privacy Project comes from [@MAPS], which scaled the initial annotation scheme of the OPP-115 to 441,626 privacy policies using web crawling and automated annotation to classify data actions with unprecedented accuracy - a process the authors title the MAPS method. Datasets geared specifically towards investigating opt-out choices in privacy policies as well as GDPR-specific annotation schemes are also products of The Usable Privacy Project [@Kumar2, @Poplavska].
+
+It is also worth noting that the vast majority of data work done within The Usable Privacy Project was programmed with Python. Given that we have decided to conduct this experiment with R [@citeR], there were some inherent limitations in terms of how we could realistically engage with the data given its formatting in some  sections. In addition, because of the iterative nature of The Usable Privacy project, much subsequent research including the MAPS method and larger datasets require the use of web crawlers and tools either built for python or not made publicly available. In a practical sense, this means state-of-the-art developments in The Usable Privacy Project could not be leveraged for our own research and therefore utilizing the least modified data (the OPP-115 Corpus) from this project seemed a prudent decision. To our knowledge, this is among the first experiments conducted in R using data from The Usable Privacy Project and therefore a secondary contribution of this project is the development a tidyverse-formatted dataset containing policy-by-policy counts of distinct OPP-115 corpus data actions. This dataset is made publicly available via Github here: 
+
+## The OPP-115 Corpus
+
+```{r, include=FALSE}
+
+### Loading Data ###
+
+#install.packages("gtools")
+library(gtools)
+
+## function that loads .csv file from path. Slightly modified from: https://stackoverflow.com/questions/23190280/whats-wrong-with-my-function-to-load-multiple-csv-files-into-single-dataframe ##
+
+load_data <- function(path) { 
+  files <- dir(path, pattern = '\\.csv', full.names = TRUE)
+  tables <- lapply(files, read.csv, stringsAsFactors = TRUE, header = FALSE)
+  do.call(smartbind, tables) # smartbind used here because column names were different across all data
+}
+
+### Data Wrangling ###
+
+#install.packages("reshape2")
+library(reshape2)
+
+OPP115 <- load_data("OPP115") %>% 
+  select(., V6, V9) %>% 
+  drop_na(., V6, V9) %>% 
+  rename(data_action = V6, company_url = V9) %>% 
+  group_by_all() %>% 
+  summarise(total = length(data_action)) %>% 
+  dcast(., company_url ~ data_action) %>%
+  clean_names() %>%
+  mutate_if(is.numeric, replace_na, replace = 0)
+
+```
+
+```{r, echo=FALSE}
+
+### Plotting the OPP-115 Data Actions in a jitter plot with user_choice_control variable ###
+
+opp115_plot1 <- ggplot(
+  data = OPP115, aes(x = international_and_specific_audiences, y = user_choice_control))+
+  geom_jitter(color = "light blue") +
+  geom_smooth(method = lm, linetype = "dashed", color = "light blue", fill = "blue")
+  
+opp115_plot1
+
+```
+```{r,echo=FALSE}
+
+### Plotting the OPP-115 Data Actions in a jitter plot with user_access_edit_and_deletion variable ###
+
+opp115_plot2 <- ggplot(
+  data = OPP115, aes(x = international_and_specific_audiences, y = user_access_edit_and_deletion))+
+  geom_jitter(color = "lightcoral") +
+  geom_smooth(method = lm, linetype = "dashed", color = "lightcoral", fill = "coral")
+  
+opp115_plot2
+```
+
+```{r, echo=FALSE}
+
+### Plotting the OPP-115 Data Actions in a jitter plot with do_not_track variable ###
+
+opp115_plot3 <- ggplot(
+  data = OPP115, aes(x = international_and_specific_audiences, y = do_not_track))+
+  geom_jitter(color = "lightgreen") +
+  geom_smooth(method = lm, linetype = "dashed", color = "lightgreen", fill = "darkgreen")
+  
+opp115_plot3
+```
+
+
+# Model
+
+```{r}
+
+```
+
+# Results and Discussion
+
+# Closing Remarks
+
+# References
+
+# Appendices
