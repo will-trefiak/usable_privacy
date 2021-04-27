@@ -3,7 +3,9 @@ title: "Privacy Policies with a Higher Count of 'Positive Data Actions' also hav
 author: "William J. Trefiak"
 date: "26/04/2021"
 output:
-  pdf_document: default
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
 abstract: "The past five years have marked a significant shift in the work of privacy policy researchers. Enabled by the Usable Privacy Project, myriad datasets in the form of annotated privacy policy corpora have been developed and further research is only accellerating. This project briefly tracks the efforts made by The Usable Privacy Project before turning to an experiment of it's own, which aims to measure whether emerging privacy legislation such as the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA) have an impact on the quality of privacy policies. Using a multiplenegative binomial regression, this project aims to speak on potential causality between legal language geared towards a specific regulatory audience and the quality of the privacy policy. Findings are somehwhat inconclusive given the nature of the data as well as large discrepancies in the count of variables observed as well as the data's overall prominence. All data and relevant documents for this project can be found via. github at: https://github.com/will-trefiak/usable_privacy" 
 ---
 ```{r setup, include=FALSE}
